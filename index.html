@@ -12,6 +12,8 @@ li { display: flex; justify-content: space-between; margin: 5px 0; background: #
 .total { font-weight: bold; margin-top: 20px; text-align: right; }
 .delete { background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 5px; }
 </style>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <h1>Liste de courses</h1>
@@ -26,12 +28,9 @@ li { display: flex; justify-content: space-between; margin: 5px 0; background: #
 <div class="total">Total : <span id="total">0.00</span> €</div>
 
 
-<script type="module">
+<script >
 
 // Import the functions you need from the SDKs you need
- import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } 
-      from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -43,58 +42,58 @@ const firebaseConfig = {
   appId: "1:219879530531:web:498eed4d8d92d740255196"
 };
 
- // Initialisation de Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-    const listeCourses = collection(db, "courses");
-    const listeElement = document.getElementById("liste");
-    const totalElement = document.getElementById("total");
-    let total = 0;
 
-    // Fonction pour ajouter un produit
-    document.getElementById("ajouter").addEventListener("click", async () => {
-      const nom = document.getElementById("produit").value.trim();
-      const prix = parseFloat(document.getElementById("prix").value);
+let total = 0;
 
-      if (nom && !isNaN(prix)) {
-        await addDoc(listeCourses, { nom, prix });
-        document.getElementById("produit").value = "";
-        document.getElementById("prix").value = "";
-      } else {
-        alert("Veuillez entrer un nom et un prix valide.");
-      }
-    });
 
-    // Fonction pour supprimer un produit
-    async function supprimerProduit(id) {
-      await deleteDoc(doc(db, "courses", id));
-    }
+function ajouterProduit() {
+const nom = document.getElementById('produit').value.trim();
+const prix = parseFloat(document.getElementById('prix').value);
 
-    // Écoute en temps réel
-    onSnapshot(listeCourses, (snapshot) => {
-      listeElement.innerHTML = "";
-      total = 0;
 
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${data.nom}</td>
-          <td>${data.prix.toFixed(2)}</td>
-          <td>
-            <button class="delete" onclick="supprimerProduit('${docSnap.id}')">Supprimer</button>
-          </td>
-        `;
-        listeElement.appendChild(tr);
-        total += data.prix;
-      });
+if (nom && !isNaN(prix)) {
+db.collection("courses").add({
+nom: nom,
+prix: prix
+});
+document.getElementById('produit').value = '';
+document.getElementById('prix').value = '';
+} else {
+alert('Veuillez entrer un nom et un prix valide.');
+}
+}
 
-      totalElement.textContent = total.toFixed(2);
-    });
 
-    // Rendre la fonction de suppression accessible dans le scope global
-    window.supprimerProduit = supprimerProduit;
+function supprimerProduit(id) {
+db.collection("courses").doc(id).delete();
+}
+
+
+// Mise à jour en temps réel
+db.collection("courses").onSnapshot(snapshot => {
+const liste = document.getElementById('liste');
+liste.innerHTML = '';
+total = 0;
+
+
+snapshot.forEach(doc => {
+const data = doc.data();
+const tr = document.createElement('tr');
+tr.innerHTML = `
+<td>${data.nom}</td>
+<td>${data.prix.toFixed(2)}</td>
+<td><button class="delete" onclick="supprimerProduit('${doc.id}')">Supprimer</button></td>
+`;
+liste.appendChild(tr);
+total += data.prix;
+});
+
+
+document.getElementById('total').textContent = total.toFixed(2);
+});
 </script>
 </body>
 </html>
