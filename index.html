@@ -26,25 +26,41 @@ li { display: flex; justify-content: space-between; margin: 5px 0; background: #
 <div class="total">Total : <span id="total">0.00</span> €</div>
 
 
-<script>
+<script type="module">
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBPzwXgtqEYfs9O9Rl2yQwGChBNcXvGIEI",
+  authDomain: "listing-4aa46.firebaseapp.com",
+  projectId: "listing-4aa46",
+  storageBucket: "listing-4aa46.firebasestorage.app",
+  messagingSenderId: "219879530531",
+  appId: "1:219879530531:web:498eed4d8d92d740255196"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = app.firestore();
+
+
 let total = 0;
 
 
 function ajouterProduit() {
-const nom = document.getElementById('produit').value;
+const nom = document.getElementById('produit').value.trim();
 const prix = parseFloat(document.getElementById('prix').value);
 
 
 if (nom && !isNaN(prix)) {
-const li = document.createElement('li');
-li.innerHTML = `${nom} - ${prix.toFixed(2)} € <button class="delete" onclick="supprimerProduit(this, ${prix})">X</button>`;
-document.getElementById('liste').appendChild(li);
-
-
-total += prix;
-document.getElementById('total').textContent = total.toFixed(2);
-
-
+db.collection("courses").add({
+nom: nom,
+prix: prix
+});
 document.getElementById('produit').value = '';
 document.getElementById('prix').value = '';
 } else {
@@ -53,11 +69,33 @@ alert('Veuillez entrer un nom et un prix valide.');
 }
 
 
-function supprimerProduit(button, prix) {
-button.parentElement.remove();
-total -= prix;
-document.getElementById('total').textContent = total.toFixed(2);
+function supprimerProduit(id) {
+db.collection("courses").doc(id).delete();
 }
+
+
+// Mise à jour en temps réel
+db.collection("courses").onSnapshot(snapshot => {
+const liste = document.getElementById('liste');
+liste.innerHTML = '';
+total = 0;
+
+
+snapshot.forEach(doc => {
+const data = doc.data();
+const tr = document.createElement('tr');
+tr.innerHTML = `
+<td>${data.nom}</td>
+<td>${data.prix.toFixed(2)}</td>
+<td><button class="delete" onclick="supprimerProduit('${doc.id}')">Supprimer</button></td>
+`;
+liste.appendChild(tr);
+total += data.prix;
+});
+
+
+document.getElementById('total').textContent = total.toFixed(2);
+});
 </script>
 </body>
 </html>
