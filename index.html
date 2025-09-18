@@ -2,30 +2,97 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Liste de courses</title>
-<style>
-body { font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 20px; }
-h1 { text-align: center; }
-input, button { padding: 8px; margin: 5px; }
-ul { list-style: none; padding: 0; }
-li { display: flex; justify-content: space-between; margin: 5px 0; background: #f4f4f4; padding: 8px; border-radius: 5px; }
-.total { font-weight: bold; margin-top: 20px; text-align: right; }
-.delete { background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 5px; }
-</style>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <title>Liste de courses partagée</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+      font-size: 16px;
+    }
+    td {
+      font-size: 15px;
+    }
+    .total {
+      font-weight: bold;
+      margin-top: 20px;
+      text-align: right;
+      font-size: 20px;
+    }
+    .delete {
+      background: red;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    .form-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .form-container input {
+      flex: 1 1 180px;
+      min-width: 150px;
+    }
+  </style>
+
+  <!-- Firebase compat scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
-<h1>Liste de courses</h1>
+  <h1>Liste de courses partagée</h1>
 
+  <div class="form-container">
+    <input type="text" id="utilisateur" placeholder="Nom de la personne">
+    <input type="text" id="lieu" placeholder="Lieu d'achat">
+    <input type="text" id="produit" placeholder="Nom du produit">
+    <input type="number" id="prix" placeholder="Prix (€)" step="0.01">
+    <button onclick="ajouterProduit()">Ajouter</button>
+  </div>
 
-<input type="text" id="produit" placeholder="Nom du produit">
-<input type="number" id="prix" placeholder="Prix" step="0.01">
-<button onclick="ajouterProduit()">Ajouter</button>
+  <table>
+    <thead>
+      <tr>
+        <th>Personne</th>
+        <th>Lieu</th>
+        <th>Produit</th>
+        <th>Prix (€)</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="liste"></tbody>
+  </table>
 
-
-<ul id="liste"></ul>
-<div class="total">Total : <span id="total">0.00</span> €</div>
+  <div class="total">Total : <span id="total">0.00</span> €</div>
 
 
 <script >
@@ -46,54 +113,55 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 
-let total = 0;
+const listeCourses = db.collection("courses");
+    let total = 0;
 
+    // Ajouter un produit
+    function ajouterProduit() {
+      const utilisateur = document.getElementById("utilisateur").value.trim();
+      const lieu = document.getElementById("lieu").value.trim();
+      const produit = document.getElementById("produit").value.trim();
+      const prix = parseFloat(document.getElementById("prix").value);
 
-function ajouterProduit() {
-const nom = document.getElementById('produit').value.trim();
-const prix = parseFloat(document.getElementById('prix').value);
+      if (utilisateur && lieu && produit && !isNaN(prix)) {
+        listeCourses.add({ utilisateur, lieu, produit, prix });
+        // Réinitialiser les champs
+        document.getElementById("utilisateur").value = "";
+        document.getElementById("lieu").value = "";
+        document.getElementById("produit").value = "";
+        document.getElementById("prix").value = "";
+      } else {
+        alert("Veuillez remplir tous les champs correctement.");
+      }
+    }
 
+    // Supprimer un produit
+    function supprimerProduit(id) {
+      listeCourses.doc(id).delete();
+    }
 
-if (nom && !isNaN(prix)) {
-db.collection("courses").add({
-nom: nom,
-prix: prix
-});
-document.getElementById('produit').value = '';
-document.getElementById('prix').value = '';
-} else {
-alert('Veuillez entrer un nom et un prix valide.');
-}
-}
+    // Écoute en temps réel
+    listeCourses.onSnapshot(snapshot => {
+      const listeElement = document.getElementById("liste");
+      listeElement.innerHTML = "";
+      total = 0;
 
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${data.utilisateur}</td>
+          <td>${data.lieu}</td>
+          <td>${data.produit}</td>
+          <td>${data.prix.toFixed(2)}</td>
+          <td><button class="delete" onclick="supprimerProduit('${doc.id}')">Supprimer</button></td>
+        `;
+        listeElement.appendChild(tr);
+        total += data.prix;
+      });
 
-function supprimerProduit(id) {
-db.collection("courses").doc(id).delete();
-}
-
-
-// Mise à jour en temps réel
-db.collection("courses").onSnapshot(snapshot => {
-const liste = document.getElementById('liste');
-liste.innerHTML = '';
-total = 0;
-
-
-snapshot.forEach(doc => {
-const data = doc.data();
-const tr = document.createElement('tr');
-tr.innerHTML = `
-<td>${data.nom}</td>
-<td>${data.prix.toFixed(2)}</td>
-<td><button class="delete" onclick="supprimerProduit('${doc.id}')">Supprimer</button></td>
-`;
-liste.appendChild(tr);
-total += data.prix;
-});
-
-
-document.getElementById('total').textContent = total.toFixed(2);
-});
+      document.getElementById("total").textContent = total.toFixed(2);
+    });
 </script>
 </body>
 </html>
