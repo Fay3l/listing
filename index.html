@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
   <title>Liste de courses</title>
-  <style>
+ <style>
     body {
       font-family: Arial, sans-serif;
       max-width: 900px;
@@ -50,6 +50,16 @@
       cursor: pointer;
       border-radius: 5px;
       font-size: 14px;
+      margin-right: 5px;
+    }
+    .edit {
+      background: orange;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 14px;
     }
     .form-container {
       display: flex;
@@ -76,7 +86,8 @@
     <input type="text" id="lieu" placeholder="Lieu d'achat">
     <input type="text" id="produit" placeholder="Nom du produit">
     <input type="number" id="prix" placeholder="Prix (€)" step="0.01">
-    <button onclick="ajouterProduit()">Ajouter</button>
+    <button id="ajouterBtn" onclick="ajouterProduit()">Ajouter</button>
+    <button id="modifierBtn" style="display:none;" onclick="validerModification()">Valider la modification</button>
   </div>
 
   <table>
@@ -86,7 +97,7 @@
         <th>Lieu</th>
         <th>Produit</th>
         <th>Prix (€)</th>
-        <th>Action</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody id="liste"></tbody>
@@ -110,11 +121,11 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+    const db = firebase.firestore();
+    const listeCourses = db.collection("courses");
 
-
-const listeCourses = db.collection("courses");
     let total = 0;
+    let idEnCours = null; // Pour savoir quel élément est en cours de modification
 
     // Ajouter un produit
     function ajouterProduit() {
@@ -123,13 +134,45 @@ const listeCourses = db.collection("courses");
       const produit = document.getElementById("produit").value.trim();
       const prix = parseFloat(document.getElementById("prix").value);
 
-      if (utilisateur && lieu && produit && !isNaN(prix)) {
+      if (utilisateur && lieu && produit ) {
+        if(isNaN(prix))
+        {
+          prix = 0
+        }
         listeCourses.add({ utilisateur, lieu, produit, prix });
-        // Réinitialiser les champs
-        document.getElementById("utilisateur").value = "";
-        document.getElementById("lieu").value = "";
-        document.getElementById("produit").value = "";
-        document.getElementById("prix").value = "";
+        resetForm();
+      } else {
+        alert("Veuillez remplir tous les champs correctement.");
+      }
+    }
+
+    // Préparer le formulaire pour la modification
+    function modifierProduit(id, data) {
+      document.getElementById("utilisateur").value = data.utilisateur;
+      document.getElementById("lieu").value = data.lieu;
+      document.getElementById("produit").value = data.produit;
+      document.getElementById("prix").value = data.prix;
+
+      idEnCours = id;
+
+      document.getElementById("ajouterBtn").style.display = "none";
+      document.getElementById("modifierBtn").style.display = "inline-block";
+    }
+
+    // Valider la modification
+    function validerModification() {
+      const utilisateur = document.getElementById("utilisateur").value.trim();
+      const lieu = document.getElementById("lieu").value.trim();
+      const produit = document.getElementById("produit").value.trim();
+      const prix = parseFloat(document.getElementById("prix").value);
+
+      if (idEnCours && utilisateur && lieu && produit) {
+        if(isNaN(prix))
+        {
+          prix = 0
+        }
+        listeCourses.doc(idEnCours).update({ utilisateur, lieu, produit, prix });
+        resetForm();
       } else {
         alert("Veuillez remplir tous les champs correctement.");
       }
@@ -137,7 +180,21 @@ const listeCourses = db.collection("courses");
 
     // Supprimer un produit
     function supprimerProduit(id) {
-      listeCourses.doc(id).delete();
+      if (confirm("Voulez-vous vraiment supprimer cet élément ?")) {
+        listeCourses.doc(id).delete();
+      }
+    }
+
+    // Réinitialiser le formulaire
+    function resetForm() {
+      document.getElementById("utilisateur").value = "";
+      document.getElementById("lieu").value = "";
+      document.getElementById("produit").value = "";
+      document.getElementById("prix").value = "";
+
+      idEnCours = null;
+      document.getElementById("ajouterBtn").style.display = "inline-block";
+      document.getElementById("modifierBtn").style.display = "none";
     }
 
     // Écoute en temps réel
@@ -154,7 +211,10 @@ const listeCourses = db.collection("courses");
           <td>${data.lieu}</td>
           <td>${data.produit}</td>
           <td>${data.prix.toFixed(2)}</td>
-          <td><button class="delete" onclick="supprimerProduit('${doc.id}')">Supprimer</button></td>
+          <td>
+            <button class="edit" onclick='modifierProduit("${doc.id}", ${JSON.stringify(data)})'>Modifier</button>
+            <button class="delete" onclick="supprimerProduit('${doc.id}')">Supprimer</button>
+          </td>
         `;
         listeElement.appendChild(tr);
         total += data.prix;
