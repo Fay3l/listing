@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Liste de courses</title>
+<style>
+body { font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 20px; }
+h1 { text-align: center; }
+input, button { padding: 8px; margin: 5px; }
+ul { list-style: none; padding: 0; }
+li { display: flex; justify-content: space-between; margin: 5px 0; background: #f4f4f4; padding: 8px; border-radius: 5px; }
+.total { font-weight: bold; margin-top: 20px; text-align: right; }
+.delete { background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 5px; }
+</style>
+</head>
+<body>
+<h1>Liste de courses</h1>
+
+
+<input type="text" id="produit" placeholder="Nom du produit">
+<input type="number" id="prix" placeholder="Prix" step="0.01">
+<button onclick="ajouterProduit()">Ajouter</button>
+
+
+<ul id="liste"></ul>
+<div class="total">Total : <span id="total">0.00</span> €</div>
+
+
+<script>
+let total = 0;
+
+
+function ajouterProduit() {
+const nom = document.getElementById('produit').value;
+const prix = parseFloat(document.getElementById('prix').value);
+
+
+if (nom && !isNaN(prix)) {
+const li = document.createElement('li');
+li.innerHTML = `${nom} - ${prix.toFixed(2)} € <button class="delete" onclick="supprimerProduit(this, ${prix})">X</button>`;
+document.getElementById('liste').appendChild(li);
+
+
+total += prix;
+document.getElementById('total').textContent = total.toFixed(2);
+
+
+document.getElementById('produit').value = '';
+document.getElementById('prix').value = '';
+} else {
+alert('Veuillez entrer un nom et un prix valide.');
+}
+}
+
+
+function supprimerProduit(button, prix) {
+button.parentElement.remove();
+total -= prix;
+document.getElementById('total').textContent = total.toFixed(2);
+}
+</script>
+</body>
+</html>
