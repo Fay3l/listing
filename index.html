@@ -135,10 +135,6 @@ firebase.initializeApp(firebaseConfig);
       const prix = parseFloat(document.getElementById("prix").value);
 
       if (utilisateur && lieu && produit ) {
-        if(!prix)
-        {
-          prix = 0
-        }
         listeCourses.add({ utilisateur, lieu, produit, prix });
         resetForm();
       } else {
