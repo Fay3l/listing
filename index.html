@@ -82,10 +82,10 @@
   <h1>Liste de courses</h1>
 
   <div class="form-container">
-    <input type="text" id="utilisateur" placeholder="Nom de la personne">
-    <input type="text" id="lieu" placeholder="Lieu d'achat">
+    <input type="text" id="utilisateur" placeholder="Nom de la personne" value="">
+    <input type="text" id="lieu" placeholder="Lieu d'achat" value="">
     <input type="text" id="produit" placeholder="Nom du produit">
-    <input type="number" id="prix" placeholder="Prix (€)" step="0.01">
+    <input type="number" id="prix" placeholder="Prix (€)" step="0.01" value=0>
     <button id="ajouterBtn" onclick="ajouterProduit()">Ajouter</button>
     <button id="modifierBtn" style="display:none;" onclick="validerModification()">Valider la modification</button>
   </div>
