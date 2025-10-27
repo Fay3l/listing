@@ -134,10 +134,14 @@ firebase.initializeApp(firebaseConfig);
       const produit = document.getElementById("produit").value.trim();
       const prix = parseFloat(document.getElementById("prix").value);
 
-      if (utilisateur && lieu && produit ) {
-        if(isNaN(prix))
+      if (lieu && produit ) {
+        if(!prix)
         {
           prix = 0
+        }
+        if(!utilisateur)
+        {
+          utilisateur = ""
         }
         listeCourses.add({ utilisateur, lieu, produit, prix });
         resetForm();
