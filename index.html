@@ -164,7 +164,7 @@ firebase.initializeApp(firebaseConfig);
       const utilisateur = document.getElementById("utilisateur").value.trim();
       const lieu = document.getElementById("lieu").value.trim();
       const produit = document.getElementById("produit").value.trim();
-      const prix = parseFloat(document.getElementById("prix").value);
+      let prix = parseFloat(document.getElementById("prix").value);
 
       if (idEnCours && utilisateur && lieu && produit) {
         if(isNaN(prix))
