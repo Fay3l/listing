@@ -7,14 +7,18 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./vue-project
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
-        working-directory: ./vue-project
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: './vue-project/.nvmrc'  
           cache: 'npm'
+          cache-dependency-path: './vue-project/package-lock.json'
 
       - run: npm ci
       - run: npm run build
@@ -25,5 +29,5 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
+          local-dir: ./vue-project/dist/   # ← chemin complet
           server-dir: /www/
