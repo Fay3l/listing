@@ -8,7 +8,7 @@ type Product = {
   prix: number;
 };
 const isEditing = ref(false);
-const id = ref(Date.now().toFixed(2));
+const id = ref(Date.now());
 const personne = ref("");
 const lieu = ref("");
 const produit = ref("");
@@ -23,10 +23,11 @@ function ajouterProduit(item: Product) {
 }
 function validerModification(item: Product) {
   const index = items.value.findIndex((p) => p.id === item.id);
+  const oldPrice = items.value[index]?.prix || 0 ;
   if (index !== -1) {
-    total.value -= items.value[index].prix; // Soustraire l'ancien prix
-    items.value[index] = { ...item }; // Mettre à jour le produit
+    total.value -= oldPrice; // Soustraire l'ancien prix
     total.value += item.prix; // Ajouter le nouveau prix
+    items.value[index] = { ...item }; // Mettre à jour le produit
     isEditing.value = false;
     personne.value = "";
     lieu.value = "";
