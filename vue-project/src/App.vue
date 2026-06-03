@@ -38,7 +38,7 @@ function validerModification(item: Product) {
 
 <template>
   <div class="flex justify-center m-4">
-    <p class="text-lg font-bold">Liste des produits</p>
+    <p class="text-lg font-bold">MyLyst</p>
   </div>
 
   <div class="flex gap-4 flex-row justify-center items-center max-lg:grid grid-cols-2 m-3">
