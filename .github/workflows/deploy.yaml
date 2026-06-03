@@ -16,7 +16,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version-file: './vue-project/.nvmrc'  
+          node-version: '24'  
           cache: 'npm'
           cache-dependency-path: './vue-project/package-lock.json'
 
