@@ -2,10 +2,18 @@
     "hello": "Hallo Welt",
     "welcome": "Willkommen in unserer Vue.js-Anwendung mit i18n!",
     "currency": "€",
+    "slogan": "Ihr One-Stop-Shop für alle Ihre Bedürfnisse | Ordnung in Ihrem Einkauf, Frieden in Ihrem Geist.",
     "placeholder": {
         "person": "Personenname eingeben",
         "place": "Kaufort eingeben",
         "product": "Produktname eingeben"
+    },
+    "card":{
+        "title": "Kaufdetails",
+        "person": "Person",
+        "place": "Kaufort",
+        "product": "Produkt",
+        "price": "Preis"
     },
     "button": {
         "add": "Hinzufügen",

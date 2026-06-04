@@ -2,10 +2,18 @@
     "hello": "Hello world",
     "welcome": "Welcome to our Vue.js application with i18n!",
     "currency": "$",
+    "slogan": "Your one-stop shop for all your needs | Order in your shopping, peace in your mind.",
     "placeholder": {
         "person": "Enter the person's name",
         "place": "Enter the place of purchase",
         "product": "Enter the product name"
+    },
+    "card":{
+        "title": "Purchase Details",
+        "person": "Person",
+        "place": "Place of Purchase",
+        "product": "Product",
+        "price": "Price"
     },
     "button": {
         "add": "Add",

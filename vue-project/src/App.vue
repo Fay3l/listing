@@ -75,6 +75,10 @@ function supprimerProduit(id: string) {
     </div>
   </div>
 
+  <div class="flex flex-col items-center justify-center m-3">
+    <h1 class="text-lg font-bold mb-2">{{ $t('slogan', 2) }}</h1>
+  </div>
+
 
   <div class="flex gap-4 flex-row justify-center items-center max-lg:grid grid-cols-2 m-3">
     <input type="text" class="border border-black rounded-md p-2" v-model="personne"
@@ -113,10 +117,10 @@ function supprimerProduit(id: string) {
   <div class="flex justify-center items-center m-3" v-for="item in items" :key="item.id">
     <div class="flex justify-between items-center border border-gray-300 rounded-md p-4 w-full max-w-md">
       <div>
-        <p>Personne: {{ item.personne }}</p>
-        <p>Lieu: {{ item.lieu }}</p>
-        <p>Produit: {{ item.produit }}</p>
-        <p>Prix: {{ item.prix.toFixed(2) }} {{ $t('currency') }}</p>
+        <p>{{ $t('card.person') }}: {{ item.personne }}</p>
+        <p>{{ $t('card.place') }}: {{ item.lieu }}</p>
+        <p>{{ $t('card.product') }}: {{ item.produit }}</p>
+        <p>{{ $t('card.price') }}: {{ item.prix.toFixed(2) }} {{ $t('currency') }}</p>
       </div>
       <div class="flex flex-col">
         <button class="bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 m-2" @click="

@@ -2,10 +2,18 @@
     "hello": "Bonjour le monde",
     "welcome": "Bienvenue sur notre application Vue.js avec i18n !",
     "currency": "€",
+    "slogan": "Votre magasin de tous vos besoins | L'ordre dans tes achats, la paix dans ta tête.",
     "placeholder": {
         "person": "Entrez le nom de la personne",
         "place": "Entrez le lieu d'achat",
         "product": "Entrez le nom du produit"
+    },
+    "card":{
+        "title": "Détails de l'achat",
+        "person": "Personne",
+        "place": "Lieu d'achat",
+        "product": "Produit",
+        "price": "Prix"
     },
     "button": {
         "add": "Ajouter",
