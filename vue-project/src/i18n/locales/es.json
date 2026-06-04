@@ -1,0 +1,18 @@
+{
+    "hello": "Hola mundo",
+    "welcome": "¡Bienvenido a nuestra aplicación Vue.js con i18n!",
+    "currency": "€",
+    "placeholder": {
+        "person": "Ingrese el nombre de la persona",
+        "place": "Ingrese el lugar de compra",
+        "product": "Ingrese el nombre del producto"
+    },
+    "button": {
+        "add": "Agregar",
+        "edit": "Editar",
+        "remove": "Eliminar",
+        "validate": "Validar la modificación"
+    },
+    "greeting": "¡Hola {name}!",
+    "total": "Total"
+}
