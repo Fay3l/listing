@@ -3,10 +3,11 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { v4 as uuidv4 } from "uuid";
 const langues = [
-  { code: "fr", label: "Français", icon: "/icons/flag-france.svg" },
-  { code: "en", label: "English", icon: "/icons/flag-us.svg" },
+  { code: "fr", label: "Français", icon: "/icons/flag-fr.svg" },
+  { code: "en", label: "English", icon: "/icons/flag-gb.svg" },
   { code: "es", label: "Español", icon: "/icons/flag-es.svg" },
-  { code: "de", label: "Deutsch", icon: "/icons/flag-de.svg" }
+  { code: "de", label: "Deutsch", icon: "/icons/flag-de.svg" },
+  { code: "en-US", label: "English (US)", icon: "/icons/flag-us.svg" },
 ]
 const { locale } = useI18n()
 const langueActive = computed(() => langues.find(l => l.code === locale.value))
@@ -35,9 +36,9 @@ function validerModification(item: Product) {
   const index = items.value.findIndex((p) => p.id === item.id);
   const oldPrice = items.value[index]?.prix || 0;
   if (index !== -1) {
-    total.value -= oldPrice; // Soustraire l'ancien prix
-    total.value += item.prix; // Ajouter le nouveau prix
-    items.value[index] = { ...item }; // Mettre à jour le produit
+    total.value -= oldPrice; 
+    total.value += item.prix;
+    items.value[index] = { ...item }; 
     isEditing.value = false;
     personne.value = "";
     lieu.value = "";
@@ -46,8 +47,13 @@ function validerModification(item: Product) {
   }
 }
 
-async function changerLangue(lang: string) {
-  locale.value = lang;
+function supprimerProduit(id: string) {
+  const index = items.value.findIndex((p) => p.id === id);
+  const oldPrice = items.value[index]?.prix || 0;
+  if (index !== -1) {
+    total.value -= oldPrice;
+    items.value.splice(index, 1);
+  }
 }
 
 </script>
@@ -78,7 +84,7 @@ async function changerLangue(lang: string) {
     <input type="text" class="border border-black rounded-md p-2" v-model="produit"
       :placeholder="$t('placeholder.product')" />
     <input type="number" class="border border-black rounded-md p-2" v-model="prix"
-      :placeholder="$t('placeholder.price')" step="0.01" />
+      :placeholder="$t('placeholder.price')" step="0.01" min="0" />
     <button class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 max-lg:col-span-2" @click="
       isEditing
         ? validerModification({
@@ -89,7 +95,7 @@ async function changerLangue(lang: string) {
           prix: prix,
         })
         : ajouterProduit({
-          id: id,
+          id: uuidv4(),
           personne: personne,
           lieu: lieu,
           produit: produit,
@@ -123,7 +129,7 @@ async function changerLangue(lang: string) {
         ">
           {{ $t('button.edit') }}
         </button>
-        <button class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 m-2" @click="">
+        <button class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 m-2" @click="supprimerProduit(item.id)">
           {{ $t('button.remove') }}
         </button>
       </div>
