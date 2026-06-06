@@ -6,7 +6,8 @@
     "placeholder": {
         "person": "Enter the person's name",
         "place": "Enter the place of purchase",
-        "product": "Enter the product name"
+        "product": "Enter the product name",
+        "price": "Enter the price"
     },
     "card":{
         "title": "Purchase Details",
@@ -22,5 +23,6 @@
         "validate": "Validate the modification"
     },
     "greeting": "Hello {name}!",
-    "total": "Total"
+    "total": "Total",
+    "downloadpdf": "Download PDF"
 }

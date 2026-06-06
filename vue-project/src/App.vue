@@ -2,6 +2,8 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { v4 as uuidv4 } from "uuid";
+import { type Product } from "./product.ts";
+import DocumentPdf from "./components/DocumentPdf.vue";
 const langues = [
   { code: "fr", label: "Français", icon: "/icons/flag-fr.svg" },
   { code: "en", label: "English", icon: "/icons/flag-gb.svg" },
@@ -11,13 +13,7 @@ const langues = [
 ]
 const { locale } = useI18n()
 const langueActive = computed(() => langues.find(l => l.code === locale.value))
-type Product = {
-  id: string;
-  personne: string;
-  lieu: string;
-  produit: string;
-  prix: number;
-};
+const isEmpty = computed(() => items.value.length === 0);
 const isEditing = ref(false);
 const id = ref(uuidv4());
 const personne = ref("");
@@ -36,9 +32,9 @@ function validerModification(item: Product) {
   const index = items.value.findIndex((p) => p.id === item.id);
   const oldPrice = items.value[index]?.prix || 0;
   if (index !== -1) {
-    total.value -= oldPrice; 
+    total.value -= oldPrice;
     total.value += item.prix;
-    items.value[index] = { ...item }; 
+    items.value[index] = { ...item };
     isEditing.value = false;
     personne.value = "";
     lieu.value = "";
@@ -65,7 +61,7 @@ function supprimerProduit(id: string) {
     </div>
     <div class="flex flex-row items-center gap-2">
       <div>
-        <img :src="langueActive?.icon" :alt="langueActive?.label" class="w-8 h-8" />
+        <img :src="langueActive?.icon" :alt="langueActive?.code" class="w-8 h-8" />
       </div>
       <select v-model="locale" class="border border-gray-300 rounded-md p-2">
         <option v-for="lang in langues" :key="lang.code" :value="lang.code">
@@ -75,12 +71,12 @@ function supprimerProduit(id: string) {
     </div>
   </div>
 
-  <div class="flex flex-col items-center justify-center m-3">
+  <div class="flex flex-col items-center justify-center m-5">
     <h1 class="text-lg font-bold mb-2">{{ $t('slogan', 2) }}</h1>
   </div>
 
 
-  <div class="flex gap-4 flex-row justify-center items-center max-lg:grid grid-cols-2 m-3">
+  <div class="grid grid-cols-2 items-center gap-4  justify-center m-8 ">
     <input type="text" class="border border-black rounded-md p-2" v-model="personne"
       :placeholder="$t('placeholder.person')" />
     <input type="text" class="border border-black rounded-md p-2" v-model="lieu"
@@ -89,7 +85,10 @@ function supprimerProduit(id: string) {
       :placeholder="$t('placeholder.product')" />
     <input type="number" class="border border-black rounded-md p-2" v-model="prix"
       :placeholder="$t('placeholder.price')" step="0.01" min="0" />
-    <button class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 max-lg:col-span-2" @click="
+    <div class="grid col-span-2 items-center justify-stretch">
+      <DocumentPdf :items="items" :isEmpty="isEmpty" :total="total" />
+    </div>
+    <button class="col-span-2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 " @click="
       isEditing
         ? validerModification({
           id: id,
@@ -108,6 +107,7 @@ function supprimerProduit(id: string) {
       ">
       {{ isEditing ? $t('button.edit') : $t('button.add') }}
     </button>
+
     <button id="modifierBtn" style="display: none" onclick="validerModification()"
       class="bg-green-500 text-white p-2 rounded-md hover:bg-green-600">
       {{ $t('button.validate') }}

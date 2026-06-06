@@ -6,7 +6,8 @@
     "placeholder": {
         "person": "Personenname eingeben",
         "place": "Kaufort eingeben",
-        "product": "Produktname eingeben"
+        "product": "Produktname eingeben",
+        "price": "Preis eingeben"
     },
     "card":{
         "title": "Kaufdetails",
@@ -22,5 +23,6 @@
         "validate": "Änderung bestätigen"
     },
     "greeting": "Hallo {name}!",
-    "total": "Gesamt"
+    "total": "Gesamt",
+    "downloadpdf": "PDF herunterladen"
 }
