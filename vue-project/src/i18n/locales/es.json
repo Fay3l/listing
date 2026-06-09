@@ -24,5 +24,11 @@
     },
     "greeting": "¡Hola {name}!",
     "total": "Total",
-    "downloadpdf": "Descargar PDF"
+    "downloadpdf": "Descargar PDF",
+    "message": {
+        "success":"¡Producto agregado!",
+        "error":"Por favor, complete todos los campos correctamente.",
+        "edit":"¡Producto modificado!",
+        "remove":"¡Producto eliminado!"
+    }
 }

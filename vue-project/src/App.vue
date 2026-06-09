@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { v4 as uuidv4 } from "uuid";
 import { type Product } from "./product.ts";
 import DocumentPdf from "./components/DocumentPdf.vue";
+import MessagePopUp from "./components/MessagePopUp.vue";
 const langues = [
   { code: "fr", label: "Français", icon: "/icons/flag-fr.svg" },
   { code: "en", label: "English", icon: "/icons/flag-gb.svg" },
@@ -11,10 +12,21 @@ const langues = [
   { code: "de", label: "Deutsch", icon: "/icons/flag-de.svg" },
   { code: "en-US", label: "English (US)", icon: "/icons/flag-us.svg" },
 ]
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 const langueActive = computed(() => langues.find(l => l.code === locale.value))
 const isEmpty = computed(() => items.value.length === 0);
 const isEditing = ref(false);
+const Message = ref({
+  message: "",
+  type: "",
+  disabled: true,
+})
+const showMessage = (message: string, type: string) => {
+  Message.value = { message, type, disabled: false };
+  setTimeout(() => {
+    Message.value.disabled = true;
+  }, 2000);
+}
 const id = ref(uuidv4());
 const personne = ref("");
 const lieu = ref("");
@@ -23,8 +35,13 @@ const prix = ref(0);
 const items = ref<Product[]>([]);
 let total = ref(0);
 function ajouterProduit(item: Product) {
+  if (!item.personne || !item.lieu || !item.produit) {
+    showMessage(t('message.error'), "Error");
+    return;
+  }
   items.value.push(item);
   total.value += item.prix;
+  showMessage(t('message.success'), "Success");
   produit.value = "";
 
 }
@@ -36,8 +53,7 @@ function validerModification(item: Product) {
     total.value += item.prix;
     items.value[index] = { ...item };
     isEditing.value = false;
-    personne.value = "";
-    lieu.value = "";
+    showMessage(t('message.edit'), "Success");
     produit.value = "";
     prix.value = 0;
   }
@@ -49,12 +65,14 @@ function supprimerProduit(id: string) {
   if (index !== -1) {
     total.value -= oldPrice;
     items.value.splice(index, 1);
+    showMessage(t('message.remove'), "Success");
   }
 }
 
 </script>
 
 <template>
+  <MessagePopUp :message="Message.message" :type="Message.type" :disabled="Message.disabled" />
   <div class="flex flex-row items-center justify-between  m-8">
     <div>
       <p class="text-2xl font-bold">MyLyst</p>

@@ -24,5 +24,11 @@
     },
     "greeting": "Hello {name}!",
     "total": "Total",
-    "downloadpdf": "Download PDF"
+    "downloadpdf": "Download PDF",
+    "message": {
+        "success":"Product added!",
+        "error":"Please fill in all fields correctly.",
+        "edit":"Product modified!",
+        "remove":"Product deleted!"
+    }
 }
