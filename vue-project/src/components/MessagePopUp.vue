@@ -11,7 +11,7 @@ const props = defineProps<{
     <div class="flex justify-center fixed top-0 w-full mt-5" v-if="!props.disabled">
         <div
             :class="[
-                'flex items-center flex-col border-2 px-20 rounded-lg',
+                'flex items-center justify-center flex-col border-2 px-20 rounded-lg max-sm: w-8/12',
                 props.type === 'Error' ? 'border-red-600 bg-red-100' : 'border-green-600 bg-green-100',
                 { shake: !props.disabled }
             ]">

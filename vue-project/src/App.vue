@@ -60,6 +60,7 @@ function validerModification(item: Product) {
 }
 
 function supprimerProduit(id: string) {
+  isEditing.value = false;
   const index = items.value.findIndex((p) => p.id === id);
   const oldPrice = items.value[index]?.prix || 0;
   if (index !== -1) {
