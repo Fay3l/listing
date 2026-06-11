@@ -2,7 +2,7 @@
 <html lang="">
 
 <head>
-  <meta name="google-site-verification" content="0A1MY8YczNecEOIyZRExPAGu9lp6ohPQr1MNoC2c_ds"  charset="UTF-8"/>
+  <meta name="google-site-verification" content="0A1MY8YczNecEOIyZRExPAGu9lp6ohPQr1MNoC2c_ds" charset="UTF-8" />
   <link rel="icon" href="/icon_mylyst_32x32.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,14 +10,44 @@
     rel="stylesheet">
   <link rel="stylesheet" href="./src/style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyLyst</title>
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://mylyst.app" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "MyLyst",
+    "url": "https://mylyst.app",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Web",
+    "description": "MyLyst helps you create, organize, and share your lists every day",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    }
+  }
+  </script>
+  <title><%= title %></title>
+  <meta name="description" content="<%= description %>" />
+  <meta property="og:title" content="<%= title %>" />
+  <meta property="og:description" content="<%= description %>" />
+  <meta property="og:image" content="<%= ogImage %>" />
+  <meta property="og:url" content="https://mylyst.app" />
+  <meta property="og:type" content="website" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="<%= title %>" />
+  <meta name="twitter:description" content="<%= description %>" />
+  <meta name="twitter:image" content="<%= ogImage %>" />
+
 </head>
 
 <body>
   <div id="app"></div>
   <script type="module" src="/src/main.ts"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6956858658655103"
-     crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script>
 </body>
 
 </html>
