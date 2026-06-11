@@ -16,7 +16,6 @@
     "jspdf-autotable": "^5.0.8",
     "tailwindcss": "^4.3.0",
     "uuid": "^14.0.0",
-    "vite-plugin-html": "^3.2.2",
     "vue": "^3.5.32",
     "vue-i18n": "^11.4.4"
   },
