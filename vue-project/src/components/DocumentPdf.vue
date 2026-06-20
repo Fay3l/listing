@@ -19,10 +19,10 @@ function downloadPDF(products: Product[], total: number) {
         startY: 42, 
         head: [[t('card.person'), t('card.place'), t('card.product'), t('card.price')]],
         body: products.map(item => [
-            item.personne,
-            item.lieu,
-            item.produit,
-            `${item.prix.toFixed(2)} ${t('currency')}`
+            item.person,
+            item.place,
+            item.product,
+            `${item.price.toFixed(2)} ${t('currency')}`
         ]),
     })
 

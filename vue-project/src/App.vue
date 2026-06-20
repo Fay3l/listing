@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { v4 as uuidv4 } from "uuid";
 import { type Product } from "./product.ts";
 import DocumentPdf from "./components/DocumentPdf.vue";
 import MessagePopUp from "./components/MessagePopUp.vue";
+import { addProductInDB, openDB } from "./IndexedDB/db.ts";
 const langues = [
   { code: "fr", label: "Français", icon: "/icons/flag-fr.svg" },
   { code: "en", label: "English", icon: "/icons/flag-gb.svg" },
@@ -13,6 +14,9 @@ const langues = [
   { code: "en-US", label: "English (US)", icon: "/icons/flag-us.svg" },
 ]
 const { locale, t } = useI18n()
+onMounted(async()=>{
+  await openDB(items.value)
+})
 const langueActive = computed(() => langues.find(l => l.code === locale.value))
 const isEmpty = computed(() => items.value.length === 0);
 const isEditing = ref(false);
@@ -34,23 +38,24 @@ const produit = ref("");
 const prix = ref(0);
 const items = ref<Product[]>([]);
 let total = ref(0);
-function ajouterProduit(item: Product) {
-  if (!item.personne || !item.lieu || !item.produit) {
+async function ajouterProduit(item: Product) {
+  if (!item.person || !item.place || !item.product) {
     showMessage(t('message.error'), "Error");
     return;
   }
   items.value.push(item);
-  total.value += item.prix;
+  await addProductInDB(item)
+  total.value += item.price;
   showMessage(t('message.success'), "Success");
   produit.value = "";
 
 }
 function validerModification(item: Product) {
   const index = items.value.findIndex((p) => p.id === item.id);
-  const oldPrice = items.value[index]?.prix || 0;
+  const oldPrice = items.value[index]?.price || 0;
   if (index !== -1) {
     total.value -= oldPrice;
-    total.value += item.prix;
+    total.value += item.price;
     items.value[index] = { ...item };
     isEditing.value = false;
     showMessage(t('message.edit'), "Success");
@@ -62,7 +67,7 @@ function validerModification(item: Product) {
 function supprimerProduit(id: string) {
   isEditing.value = false;
   const index = items.value.findIndex((p) => p.id === id);
-  const oldPrice = items.value[index]?.prix || 0;
+  const oldPrice = items.value[index]?.price || 0;
   if (index !== -1) {
     total.value -= oldPrice;
     items.value.splice(index, 1);
@@ -111,17 +116,17 @@ function supprimerProduit(id: string) {
       isEditing
         ? validerModification({
           id: id,
-          personne: personne,
-          lieu: lieu,
-          produit: produit,
-          prix: prix,
+          person: personne,
+          place: lieu,
+          product: produit,
+          price: prix,
         })
         : ajouterProduit({
           id: uuidv4(),
-          personne: personne,
-          lieu: lieu,
-          produit: produit,
-          prix: prix,
+          person: personne,
+          place: lieu,
+          product: produit,
+          price: prix,
         })
       ">
       {{ isEditing ? $t('button.edit') : $t('button.add') }}
@@ -136,18 +141,18 @@ function supprimerProduit(id: string) {
   <div class="flex justify-center items-center m-3" v-for="item in items" :key="item.id">
     <div class="flex justify-between items-center border border-gray-300 rounded-md p-4 w-full max-w-md">
       <div>
-        <p>{{ $t('card.person') }}: {{ item.personne }}</p>
-        <p>{{ $t('card.place') }}: {{ item.lieu }}</p>
-        <p>{{ $t('card.product') }}: {{ item.produit }}</p>
-        <p>{{ $t('card.price') }}: {{ item.prix.toFixed(2) }} {{ $t('currency') }}</p>
+        <p>{{ $t('card.person') }}: {{ item.person }}</p>
+        <p>{{ $t('card.place') }}: {{ item.place }}</p>
+        <p>{{ $t('card.product') }}: {{ item.product }}</p>
+        <p>{{ $t('card.price') }}: {{ item.price.toFixed(2) }} {{ $t('currency') }}</p>
       </div>
       <div class="flex flex-col">
         <button class="bg-yellow-500 text-white p-2 rounded-md hover:bg-yellow-600 m-2" @click="
           (id = item.id),
-          (personne = item.personne),
-          (lieu = item.lieu),
-          (produit = item.produit),
-          (prix = item.prix);
+          (personne = item.person),
+          (lieu = item.place),
+          (produit = item.product),
+          (prix = item.price);
         isEditing = true;
         ">
           {{ $t('button.edit') }}

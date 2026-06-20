@@ -1,7 +1,7 @@
 export type Product = {
   id: string;
-  personne: string;
-  lieu: string;
-  produit: string;
-  prix: number;
+  person: string;
+  place: string;
+  product: string;
+  price: number;
 };
