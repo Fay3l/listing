@@ -22,7 +22,7 @@ export function openDB(): Promise<IDBDatabase> {
             const db: IDBDatabase = event.target.result;
             const objectStore = db.createObjectStore("products", { keyPath: "id" });
 
-            objectStore.createIndex("name", "name", { unique: false });
+            objectStore.createIndex("person", "person", { unique: false });
             objectStore.createIndex("price", "price", { unique: false });
             objectStore.createIndex("product", "product", { unique: false });
             objectStore.createIndex("place", "place", { unique: false });
@@ -52,4 +52,11 @@ export async function addProductInDB(product: Product) {
     req.onerror = function (event: any) {
         console.error("Chef il y a une erreur ", event.target.errorCode);
     }
+}
+
+export async function deleteProductInDB(product: Product){
+    if (!database){
+        console.error("DB NOT OPEN")
+    }
+    
 }
