@@ -4,4 +4,5 @@ export type Product = {
   place: string;
   product: string;
   price: number;
+  isChecked:boolean
 };

@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { type Product } from "./product.ts";
 import DocumentPdf from "./components/DocumentPdf.vue";
 import MessagePopUp from "./components/MessagePopUp.vue";
-import { addProductInDB, openDB } from "./IndexedDB/db.ts";
+import { addProductInDB, deleteProductInDB, getProductsInDB, getTotalProductsInDB, openDB, updateProductInDB } from "./IndexedDB/db.ts";
 const langues = [
   { code: "fr", label: "Français", icon: "/icons/flag-fr.svg" },
   { code: "en", label: "English", icon: "/icons/flag-gb.svg" },
@@ -14,8 +14,10 @@ const langues = [
   { code: "en-US", label: "English (US)", icon: "/icons/flag-us.svg" },
 ]
 const { locale, t } = useI18n()
-onMounted(async()=>{
-  await openDB(items.value)
+onMounted(async () => {
+  await openDB()
+  items.value = await getProductsInDB()
+  total.value = await getTotalProductsInDB()
 })
 const langueActive = computed(() => langues.find(l => l.code === locale.value))
 const isEmpty = computed(() => items.value.length === 0);
@@ -43,36 +45,30 @@ async function ajouterProduit(item: Product) {
     showMessage(t('message.error'), "Error");
     return;
   }
-  items.value.push(item);
   await addProductInDB(item)
-  total.value += item.price;
+  items.value = await getProductsInDB()
+  total.value = await getTotalProductsInDB()
   showMessage(t('message.success'), "Success");
   produit.value = "";
 
 }
-function validerModification(item: Product) {
-  const index = items.value.findIndex((p) => p.id === item.id);
-  const oldPrice = items.value[index]?.price || 0;
-  if (index !== -1) {
-    total.value -= oldPrice;
-    total.value += item.price;
-    items.value[index] = { ...item };
-    isEditing.value = false;
-    showMessage(t('message.edit'), "Success");
-    produit.value = "";
-    prix.value = 0;
-  }
+async function validerModification(item: Product) {
+  await updateProductInDB(item)
+  items.value = await getProductsInDB()
+  total.value = await getTotalProductsInDB()
+  isEditing.value = false;
+  showMessage(t('message.edit'), "Success"); 
+  produit.value = "";
+  prix.value = 0;
 }
 
-function supprimerProduit(id: string) {
+async function supprimerProduit(id: string) {
   isEditing.value = false;
-  const index = items.value.findIndex((p) => p.id === id);
-  const oldPrice = items.value[index]?.price || 0;
-  if (index !== -1) {
-    total.value -= oldPrice;
-    items.value.splice(index, 1);
-    showMessage(t('message.remove'), "Success");
-  }
+  await deleteProductInDB(id)
+  items.value = await getProductsInDB()
+  total.value = await getTotalProductsInDB()
+  showMessage(t('message.remove'), "Success");
+
 }
 
 </script>
@@ -120,6 +116,7 @@ function supprimerProduit(id: string) {
           place: lieu,
           product: produit,
           price: prix,
+          isChecked:false
         })
         : ajouterProduit({
           id: uuidv4(),
@@ -127,6 +124,7 @@ function supprimerProduit(id: string) {
           place: lieu,
           product: produit,
           price: prix,
+          isChecked:false
         })
       ">
       {{ isEditing ? $t('button.edit') : $t('button.add') }}

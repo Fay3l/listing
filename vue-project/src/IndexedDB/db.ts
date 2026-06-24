@@ -1,6 +1,6 @@
 import type { Product } from "@/product";
 
-var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+var indexedDB = window.indexedDB;
 let database: IDBDatabase
 
 export function openDB(): Promise<IDBDatabase> {
@@ -8,7 +8,7 @@ export function openDB(): Promise<IDBDatabase> {
         const request = indexedDB.open("myDatabase", 3);
 
         request.onsuccess = function (event: any) {
-            database = event.target.result; 
+            database = event.target.result;
             console.log("DB connectée");
             resolve(database);
         };
@@ -34,18 +34,14 @@ export function openDB(): Promise<IDBDatabase> {
     });
 }
 
-
-
-
-
 export async function addProductInDB(product: Product) {
-    if (!database){
+    if (!database) {
         console.error("DB NOT OPEN")
     }
     console.log(database)
-    var transaction = database.transaction("products", "readwrite")
-    var objectStore = transaction.objectStore("products")
-    var req = objectStore.add(product)
+    let transaction = database.transaction("products", "readwrite")
+    let objectStore = transaction.objectStore("products")
+    let req = objectStore.add(product)
     req.onsuccess = function (event: any) {
         console.log("Product Added ", event.target.result)
     }
@@ -54,9 +50,78 @@ export async function addProductInDB(product: Product) {
     }
 }
 
-export async function deleteProductInDB(product: Product){
-    if (!database){
+export async function deleteProductInDB(product: string) {
+    if (!database) {
         console.error("DB NOT OPEN")
     }
-    
+    console.log(database)
+    let req = database.transaction("products", "readwrite").objectStore("products").delete(product)
+    req.onsuccess = function (event: any) {
+        console.log("supprimé")
+    }
+
+}
+
+export async function getProductsInDB(): Promise<Product[]> {
+    if (!database) {
+        console.error("DB NOT OPEN")
+    }
+    console.log(database)
+    return new Promise<Product[]>((resolve, reject) => {
+        const req = database.transaction("products", "readwrite").objectStore("products").getAll()
+        req.onsuccess = function () {
+            console.log(req.result)
+            resolve(req.result as Product[])
+        }
+        req.onerror = function (event: any) {
+            console.error("Erreur récupération produits :", event.target.errorCode)
+            reject(event.target.errorCode)
+        }
+    })
+}
+
+export async function updateProductInDB(product: Product) {
+    if (!database) {
+        console.error("DB NOT OPEN")
+    }
+    console.log(database)
+    let objectStore = database
+        .transaction(["products"], "readwrite")
+        .objectStore("products");
+    const req = objectStore.get(product.id)
+    req.onsuccess = function () {
+        let requestUpdate = objectStore.put(product);
+        requestUpdate.onerror = function (event) {
+            // Faire quelque chose avec l’erreur
+        };
+        requestUpdate.onsuccess = function (event) {
+            console.log('Modifié')
+        };
+
+    }
+    req.onerror = function (event: any) {
+        console.error("Erreur récupération produits :", event.target.errorCode)
+
+    }
+
+}
+
+export async function getTotalProductsInDB(){
+    if (!database) {
+        console.error("DB NOT OPEN")
+    }
+    console.log(database)
+    return new Promise<number>((resolve, reject) => {
+        const req = database.transaction("products", "readwrite").objectStore("products").getAll()
+        req.onsuccess = function () {
+            let res:number=0 ;
+            let data = req.result as Product[]
+            data.forEach(p => res += p.price )
+            resolve(res)
+        }
+        req.onerror = function (event: any) {
+            console.error("Erreur récupération produits :", event.target.errorCode)
+            reject(event.target.errorCode)
+        }
+    })
 }
