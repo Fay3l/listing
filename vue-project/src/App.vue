@@ -83,7 +83,7 @@ async function supprimerProduit(id: string) {
       <div>
         <img :src="langueActive?.icon" :alt="langueActive?.code" class="w-8 h-8" />
       </div>
-      <select v-model="locale" class="border border-gray-300 rounded-md p-2">
+      <select id="" v-model="locale" class="border border-gray-300 rounded-md p-2">
         <option v-for="lang in langues" :key="lang.code" :value="lang.code">
           {{ lang.label }}
         </option>
@@ -97,13 +97,13 @@ async function supprimerProduit(id: string) {
 
 
   <div class="grid grid-cols-2 items-center gap-4  justify-center m-8 ">
-    <input type="text" class="border border-black rounded-md p-2" v-model="personne"
+    <input id="" type="text" class="border border-black rounded-md p-2" v-model="personne"
       :placeholder="$t('placeholder.person')" />
-    <input type="text" class="border border-black rounded-md p-2" v-model="lieu"
+    <input id="" type="text" class="border border-black rounded-md p-2" v-model="lieu"
       :placeholder="$t('placeholder.place')" />
-    <input type="text" class="border border-black rounded-md p-2" v-model="produit"
+    <input id="" type="text" class="border border-black rounded-md p-2" v-model="produit"
       :placeholder="$t('placeholder.product')" />
-    <input type="number" class="border border-black rounded-md p-2" v-model="prix"
+    <input id="" type="number" class="border border-black rounded-md p-2" v-model="prix"
       :placeholder="$t('placeholder.price')" step="0.01" min="0" />
     <div class="grid col-span-2 items-center justify-stretch">
       <DocumentPdf :items="items" :isEmpty="isEmpty" :total="total" />
@@ -165,4 +165,3 @@ async function supprimerProduit(id: string) {
   <div class="flex justify-center m-10">Total: {{ total.toFixed(2) }} {{ $t('currency') }}</div>
 </template>
 
-<style scoped></style>

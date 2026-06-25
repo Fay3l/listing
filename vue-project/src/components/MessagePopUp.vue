@@ -17,7 +17,7 @@ const props = defineProps<{
             ]">
             <p :class="['font-bold', props.type === 'Error' ? 'text-red-600' : 'text-green-600']">{{ props.type }}</p>
             <div>
-                <p :class="props.type === 'Error' ? 'text-red-500' : 'text-green-500'">{{ props.message }}</p>
+                <p :class="['text-center',props.type === 'Error' ? 'text-red-500' : 'text-green-500']">{{ props.message }}</p>
             </div>
         </div>
     </div>
