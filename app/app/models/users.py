@@ -1,5 +1,7 @@
 """ Table User """
 import datetime
+
+from .lists import Lists
 from ..database.base import Base
 # pyright: ignore[reportMissingImports]
 from sqlalchemy import DateTime, String
@@ -9,6 +11,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func  # pyright: ignore[reportMissingImports]
 from uuid import UUID, uuid4  # pyright: ignore[reportMissingImports]
 from datetime import datetime, timezone
+from .user_list import users_lists_association
+from typing import List
 
 
 class Users(Base):
@@ -27,6 +31,6 @@ class Users(Base):
         default=datetime.now(timezone.utc),
         onupdate=datetime.now(timezone.utc)
     )
-    userbooks: Mapped[list['Lists']] = relationship(
-        default_factory=list
+    lists: Mapped[List[Lists]] = relationship(
+        secondary=users_lists_association, back_populates="users",default_factory=list
     )
